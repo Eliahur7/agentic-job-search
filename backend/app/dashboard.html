@@ -1,0 +1,1200 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Chief of Staff AI — Executive Search Command Center</title>
+    <!-- Import Premium Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Load Chart.js CDN for live metrics visualization -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+      :root {
+        --bg-color: #030712;
+        --panel-bg: rgba(17, 24, 39, 0.7);
+        --border-color: rgba(255, 255, 255, 0.08);
+        --text-primary: #f9fafb;
+        --text-secondary: #94a3b8;
+        --accent-blue: #38bdf8;
+        --accent-indigo: #6366f1;
+        --accent-emerald: #10b981;
+        --accent-rose: #f43f5e;
+        --font-primary: 'Plus Jakarta Sans', sans-serif;
+        --font-display: 'Outfit', sans-serif;
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: var(--font-primary);
+        background-color: var(--bg-color);
+        background-image: 
+          radial-gradient(circle at 10% 20%, rgba(99, 102, 241, 0.15) 0%, transparent 40%),
+          radial-gradient(circle at 90% 80%, rgba(56, 189, 248, 0.12) 0%, transparent 45%);
+        background-attachment: fixed;
+        color: var(--text-primary);
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      .page {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 40px 24px 80px;
+      }
+
+      /* Glassmorphism Panel */
+      .glass-panel {
+        background: var(--panel-bg);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid var(--border-color);
+        border-radius: 24px;
+        padding: 28px;
+        box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.5);
+        transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+      }
+
+      .glass-panel:hover {
+        border-color: rgba(255, 255, 255, 0.12);
+        box-shadow: 0 15px 50px -10px rgba(0, 0, 0, 0.6);
+      }
+
+      /* Header and Hero */
+      header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 40px;
+        gap: 24px;
+      }
+
+      .logo-title h1 {
+        font-family: var(--font-display);
+        font-size: 2.5rem;
+        font-weight: 800;
+        letter-spacing: -0.03em;
+        background: linear-gradient(135deg, #ffffff 0%, #94a3b8 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 6px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .logo-title h1 .badge {
+        font-size: 0.75rem;
+        font-family: var(--font-primary);
+        font-weight: 600;
+        letter-spacing: 0.05em;
+        padding: 4px 10px;
+        border-radius: 999px;
+        background: linear-gradient(135deg, rgba(99, 102, 241, 0.2) 0%, rgba(56, 189, 248, 0.2) 100%);
+        border: 1px solid rgba(99, 102, 241, 0.3);
+        color: #a5b4fc;
+        text-transform: uppercase;
+        -webkit-text-fill-color: initial;
+      }
+
+      .logo-title p {
+        color: var(--text-secondary);
+        font-size: 1.05rem;
+        max-width: 600px;
+      }
+
+      /* Stats Overview Cards */
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 20px;
+        margin-bottom: 32px;
+      }
+
+      .stat-card {
+        padding: 20px 24px;
+        border-radius: 20px;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .stat-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 3px;
+        background: linear-gradient(90deg, var(--accent-indigo), var(--accent-blue));
+      }
+
+      .stat-card.emerald::before { background: var(--accent-emerald); }
+      .stat-card.blue::before { background: var(--accent-blue); }
+      .stat-card.rose::before { background: var(--accent-rose); }
+
+      .stat-card .label {
+        font-size: 0.85rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--text-secondary);
+        margin-bottom: 6px;
+      }
+
+      .stat-card .value {
+        font-family: var(--font-display);
+        font-size: 2.2rem;
+        font-weight: 700;
+        color: #fff;
+        line-height: 1.1;
+      }
+
+      .stat-card .trend {
+        font-size: 0.8rem;
+        margin-top: 4px;
+        color: var(--accent-emerald);
+      }
+
+      /* Two Column Analytics/Control section */
+      .dashboard-layout {
+        display: grid;
+        grid-template-columns: 1.2fr 0.8fr;
+        gap: 24px;
+        margin-bottom: 40px;
+      }
+
+      @media (max-width: 900px) {
+        .dashboard-layout {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .chart-container {
+        height: 280px;
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .control-panel h2 {
+        font-family: var(--font-display);
+        font-size: 1.4rem;
+        font-weight: 700;
+        margin-bottom: 16px;
+        color: #fff;
+      }
+
+      .search-form {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
+
+      .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .form-group label {
+        font-size: 0.8rem;
+        font-weight: 700;
+        color: var(--text-secondary);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+
+      .form-group input {
+        background: rgba(3, 7, 18, 0.4);
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        color: #fff;
+        padding: 14px;
+        font-family: inherit;
+        font-size: 0.95rem;
+        transition: all 0.2s ease;
+      }
+
+      .form-group input:focus {
+        outline: none;
+        border-color: var(--accent-indigo);
+        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+        background: rgba(3, 7, 18, 0.6);
+      }
+
+      /* Buttons & Actions */
+      .btn {
+        background: linear-gradient(135deg, var(--accent-indigo) 0%, #4338ca 100%);
+        color: #fff;
+        border: none;
+        border-radius: 12px;
+        padding: 14px 24px;
+        font-family: inherit;
+        font-size: 0.95rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        box-shadow: 0 4px 20px rgba(99, 102, 241, 0.25);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+      }
+
+      .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 24px rgba(99, 102, 241, 0.35);
+      }
+
+      .btn:active {
+        transform: translateY(0);
+      }
+
+      .btn:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none !important;
+        box-shadow: none !important;
+      }
+
+      .btn.secondary {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid var(--border-color);
+        box-shadow: none;
+        color: var(--text-primary);
+      }
+
+      .btn.secondary:hover {
+        background: rgba(255, 255, 255, 0.1);
+        border-color: rgba(255, 255, 255, 0.2);
+        box-shadow: none;
+      }
+
+      .btn.success {
+        background: linear-gradient(135deg, var(--accent-emerald) 0%, #059669 100%);
+        box-shadow: 0 4px 20px rgba(16, 185, 129, 0.2);
+      }
+
+      .btn.success:hover {
+        box-shadow: 0 6px 24px rgba(16, 185, 129, 0.3);
+      }
+
+      .btn.mini {
+        padding: 8px 14px;
+        font-size: 0.85rem;
+        border-radius: 8px;
+      }
+
+      /* Tabs filtering */
+      .tabs-container {
+        display: flex;
+        gap: 6px;
+        border-bottom: 1px solid var(--border-color);
+        padding-bottom: 12px;
+        margin-bottom: 24px;
+        overflow-x: auto;
+      }
+
+      .tab {
+        padding: 8px 16px;
+        border-radius: 999px;
+        background: transparent;
+        color: var(--text-secondary);
+        border: 1px solid transparent;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 0.9rem;
+        transition: all 0.2s ease;
+        white-space: nowrap;
+      }
+
+      .tab:hover {
+        color: #fff;
+        background: rgba(255, 255, 255, 0.04);
+      }
+
+      .tab.active {
+        background: rgba(99, 102, 241, 0.15);
+        color: #a5b4fc;
+        border-color: rgba(99, 102, 241, 0.25);
+      }
+
+      /* Job Card Overhaul */
+      .job-cards-wrapper {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+      }
+
+      .job-card {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        border: 1px solid var(--border-color);
+        border-radius: 20px;
+        padding: 24px;
+        background: rgba(17, 24, 39, 0.45);
+        box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .job-card:hover {
+        border-color: rgba(255, 255, 255, 0.15);
+        background: rgba(17, 24, 39, 0.6);
+        transform: translateY(-2px);
+      }
+
+      .job-card.archived {
+        opacity: 0.65;
+      }
+
+      .job-card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 20px;
+      }
+
+      @media (max-width: 650px) {
+        .job-card-header {
+          flex-direction: column;
+          align-items: stretch;
+        }
+      }
+
+      .job-meta-left {
+        display: flex;
+        gap: 16px;
+        flex: 1;
+      }
+
+      /* Glowing circular match ring */
+      .match-ring {
+        position: relative;
+        width: 56px;
+        height: 56px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+      }
+
+      .match-ring svg {
+        width: 56px;
+        height: 56px;
+        transform: rotate(-90deg);
+      }
+
+      .match-ring circle {
+        fill: none;
+        stroke-width: 4.5;
+      }
+
+      .match-ring circle:nth-child(1) {
+        stroke: rgba(255, 255, 255, 0.05);
+      }
+
+      .match-ring circle:nth-child(2) {
+        stroke: var(--ring-color, var(--accent-indigo));
+        stroke-dasharray: 150.79;
+        stroke-dashoffset: var(--dashoffset, 0);
+        stroke-linecap: round;
+        transition: stroke-dashoffset 0.8s ease-in-out;
+      }
+
+      .match-ring span {
+        position: absolute;
+        font-size: 0.8rem;
+        font-family: var(--font-display);
+        font-weight: 700;
+        color: #fff;
+      }
+
+      .job-title-block h3 {
+        font-size: 1.25rem;
+        font-weight: 700;
+        margin-bottom: 4px;
+        font-family: var(--font-display);
+        line-height: 1.25;
+      }
+
+      .job-title-block h3 a {
+        color: #fff;
+        text-decoration: none;
+        transition: color 0.2s ease;
+      }
+
+      .job-title-block h3 a:hover {
+        color: var(--accent-blue);
+      }
+
+      .job-details-sub {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        align-items: center;
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+      }
+
+      .job-details-sub .company {
+        font-weight: 600;
+        color: #f8fafc;
+      }
+
+      .dot-separator {
+        width: 4px;
+        height: 4px;
+        border-radius: 999px;
+        background: var(--text-secondary);
+        opacity: 0.5;
+      }
+
+      /* Badges */
+      .badge-pill {
+        display: inline-flex;
+        padding: 4px 10px;
+        border-radius: 999px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        letter-spacing: 0.02em;
+      }
+
+      .badge-source {
+        background: rgba(255, 255, 255, 0.06);
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        color: var(--text-secondary);
+      }
+
+      .badge-status {
+        background: rgba(99, 102, 241, 0.15);
+        color: #a5b4fc;
+        border: 1px solid rgba(99, 102, 241, 0.25);
+      }
+
+      .badge-status.applied {
+        background: rgba(16, 185, 129, 0.15);
+        color: #a7f3d0;
+        border: 1px solid rgba(16, 185, 129, 0.25);
+      }
+
+      .badge-status.archived {
+        background: rgba(148, 163, 184, 0.15);
+        color: #cbd5e1;
+        border: 1px solid rgba(148, 163, 184, 0.25);
+      }
+
+      .job-card-actions {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+      }
+
+      @media (max-width: 650px) {
+        .job-card-actions {
+          justify-content: flex-start;
+          width: 100%;
+        }
+      }
+
+      .job-description-excerpt {
+        font-size: 0.9rem;
+        color: var(--text-secondary);
+        border-top: 1px solid var(--border-color);
+        padding-top: 16px;
+      }
+
+      /* Message Notification Bar */
+      #message-bar {
+        padding: 12px 20px;
+        border-radius: 12px;
+        font-size: 0.9rem;
+        margin-bottom: 24px;
+        display: none;
+        animation: fadeIn 0.3s ease;
+      }
+
+      #message-bar.info {
+        background: rgba(14, 165, 233, 0.1);
+        border: 1px solid rgba(14, 165, 233, 0.2);
+        color: #7dd3fc;
+      }
+
+      #message-bar.success {
+        background: rgba(16, 185, 129, 0.1);
+        border: 1px solid rgba(16, 185, 129, 0.2);
+        color: #a7f3d0;
+      }
+
+      #message-bar.error {
+        background: rgba(244, 63, 94, 0.1);
+        border: 1px solid rgba(244, 63, 94, 0.2);
+        color: #fca5a5;
+      }
+
+      /* Premium Modal Styling */
+      .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(2, 6, 17, 0.8);
+        backdrop-filter: blur(8px);
+        z-index: 1000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      .modal-overlay.open {
+        opacity: 1;
+        pointer-events: auto;
+      }
+
+      .modal-container {
+        width: 90%;
+        max-width: 800px;
+        max-height: 85vh;
+        overflow-y: auto;
+        transform: scale(0.95);
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      .modal-overlay.open .modal-container {
+        transform: scale(1);
+      }
+
+      .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid var(--border-color);
+        padding-bottom: 16px;
+        margin-bottom: 20px;
+      }
+
+      .modal-header h2 {
+        font-family: var(--font-display);
+        font-size: 1.5rem;
+        font-weight: 700;
+      }
+
+      .modal-close {
+        background: transparent;
+        border: none;
+        color: var(--text-secondary);
+        font-size: 1.8rem;
+        cursor: pointer;
+        line-height: 1;
+        transition: color 0.2s ease;
+      }
+
+      .modal-close:hover {
+        color: #fff;
+      }
+
+      .modal-actions {
+        display: flex;
+        gap: 12px;
+        margin-bottom: 20px;
+      }
+
+      .resume-preview {
+        background: rgba(3, 7, 18, 0.6);
+        border: 1px solid var(--border-color);
+        border-radius: 14px;
+        padding: 20px;
+        font-family: 'Courier New', Courier, monospace;
+        font-size: 0.85rem;
+        color: var(--text-primary);
+        white-space: pre-wrap;
+        overflow-x: auto;
+        max-height: 450px;
+      }
+
+      /* Loading skeleton loader */
+      .skeleton-card {
+        padding: 24px;
+        border-radius: 20px;
+        background: rgba(17, 24, 39, 0.25);
+        border: 1px solid var(--border-color);
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+      }
+
+      .skeleton-line {
+        height: 16px;
+        background: linear-gradient(90deg, rgba(255,255,255,0.03) 25%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.03) 75%);
+        background-size: 200% 100%;
+        animation: loadingPulse 1.5s infinite;
+        border-radius: 4px;
+      }
+
+      .skeleton-line { width: 60%; height: 24px; }
+      .skeleton-meta { width: 40%; }
+      .skeleton-desc { width: 100%; height: 60px; }
+
+      @keyframes loadingPulse {
+        0% { background-position: 200% 0; }
+        100% { background-position: -200% 0; }
+      }
+
+      @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(4px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+
+      /* Mini loader spinner */
+      .spinner {
+        width: 18px;
+        height: 18px;
+        border: 2px solid rgba(255,255,255,0.2);
+        border-top-color: #fff;
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+        display: inline-block;
+      }
+
+      @keyframes spin {
+        to { transform: rotate(360deg); }
+      }
+
+      .empty-state {
+        padding: 60px;
+        text-align: center;
+        color: var(--text-secondary);
+        border: 1px dashed var(--border-color);
+        border-radius: 24px;
+        background: rgba(17, 24, 39, 0.25);
+      }
+
+      .empty-state h3 {
+        font-family: var(--font-display);
+        color: #fff;
+        margin-bottom: 8px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page">
+      <!-- Header -->
+      <header>
+        <div class="logo-title">
+          <h1>Chief of Staff AI <span class="badge">v3.1 Premium</span></h1>
+          <p>Autonomously discover executive infrastructure & platforms openings, optimize credentials, and verify hiring status.</p>
+        </div>
+      </header>
+
+      <!-- Stats Grid -->
+      <div class="stats-grid">
+        <div class="stat-card glass-panel">
+          <div class="label">Total Positions</div>
+          <div id="stat-total" class="value">—</div>
+          <div class="trend">Scanned Roles</div>
+        </div>
+        <div class="stat-card glass-panel emerald">
+          <div class="label">Applications Sent</div>
+          <div id="stat-applied" class="value">—</div>
+          <div class="trend" style="color: var(--accent-emerald);">Active Pipeline</div>
+        </div>
+        <div class="stat-card glass-panel blue">
+          <div class="label">Avg Match Score</div>
+          <div id="stat-match" class="value">—</div>
+          <div class="trend" style="color: var(--accent-blue);">Executive Fit</div>
+        </div>
+        <div class="stat-card glass-panel rose">
+          <div class="label">Target State</div>
+          <div id="stat-location" class="value">WI / Remote</div>
+          <div class="trend" style="color: var(--accent-rose);">Location Scope</div>
+        </div>
+      </div>
+
+      <!-- Main Dashboard Grid -->
+      <div class="dashboard-layout">
+        <!-- Funnel Visualization Chart -->
+        <div class="glass-panel">
+          <h2 style="font-family: var(--font-display); font-size: 1.25rem; font-weight: 700; margin-bottom: 20px;">Pipeline Funnel Status</h2>
+          <div class="chart-container">
+            <canvas id="funnelChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Search Control Panel -->
+        <div class="control-panel glass-panel">
+          <h2>Autonomous Agent Controls</h2>
+          <form id="search-form" class="search-form">
+            <div class="form-group">
+              <label for="keywords">Executive Role Keywords</label>
+              <input id="keywords" value="Senior Director Platform Engineering, Director Cloud Infrastructure, VP Infrastructure, Director Platform Engineering" />
+            </div>
+            <div class="form-group">
+              <label for="location">Location Preference</label>
+              <input id="location" value="Wisconsin or Remote" />
+            </div>
+            <button class="btn" type="submit" id="search-btn">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+              Scan For Vacancies
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Action status notification bar -->
+      <div id="message-bar" class="info"></div>
+
+      <!-- Toolbar tabs -->
+      <div class="tabs-container" id="tabs">
+        <button class="tab active" onclick="switchTab('all')">All Opportunities</button>
+        <button class="tab" onclick="switchTab('evaluated')">Evaluated</button>
+        <button class="tab" onclick="switchTab('applied')">Applied</button>
+        <button class="tab" onclick="switchTab('interviewing')">Interviewing</button>
+        <button class="tab" onclick="switchTab('archived')">Archived</button>
+      </div>
+
+      <!-- Main Job Listings List -->
+      <div id="job-cards-container" class="job-cards-wrapper">
+        <!-- Rendered dynamically -->
+      </div>
+    </div>
+
+    <!-- Tailored Resume Modal -->
+    <div id="resume-modal" class="modal-overlay">
+      <div class="modal-container glass-panel">
+        <div class="modal-header">
+          <h2 id="modal-job-title">Tailored Executive Asset</h2>
+          <button class="modal-close" onclick="closeModal()">&times;</button>
+        </div>
+        <div class="modal-actions">
+          <a id="modal-download-btn" href="#" target="_blank" class="btn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+            Download PDF
+          </a>
+          <button class="btn secondary" onclick="copyResumeText()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+            Copy Markdown
+          </button>
+        </div>
+        <pre id="modal-resume-text" class="resume-preview"></pre>
+      </div>
+    </div>
+
+    <script>
+      let globalJobsList = [];
+      let activeTab = 'all';
+      let funnelChartInstance = null;
+
+      // Initialize
+      document.addEventListener('DOMContentLoaded', () => {
+        setupForm();
+        fetchPipelineSnapshot();
+      });
+
+      function setupForm() {
+        const form = document.getElementById('search-form');
+        form.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          await runDailySearch();
+        });
+      }
+
+      function showMessage(text, type = 'info') {
+        const bar = document.getElementById('message-bar');
+        bar.textContent = text;
+        bar.className = `info ${type}`;
+        bar.style.display = 'block';
+        setTimeout(() => {
+          bar.style.opacity = 1;
+        }, 50);
+      }
+
+      function hideMessage() {
+        const bar = document.getElementById('message-bar');
+        bar.style.display = 'none';
+      }
+
+      async function fetchPipelineSnapshot() {
+        showSkeletonLoader();
+        try {
+          const res = await fetch('/api/v1/pipeline/snapshot', { cache: 'no-store' });
+          const data = await res.json();
+          globalJobsList = data.pipeline || [];
+          updateStats(globalJobsList);
+          renderPipeline();
+          renderChart(globalJobsList);
+          hideMessage();
+        } catch (err) {
+          console.error(err);
+          showMessage('Failed to fetch current pipeline state. Make sure backend is running.', 'error');
+        }
+      }
+
+      function updateStats(jobs) {
+        document.getElementById('stat-total').textContent = jobs.length;
+        document.getElementById('stat-applied').textContent = jobs.filter(j => j.applied).length;
+        
+        const scoredJobs = jobs.filter(j => typeof j.match_score === 'number');
+        if (scoredJobs.length) {
+          const avg = scoredJobs.reduce((sum, j) => sum + j.match_score, 0) / scoredJobs.length;
+          document.getElementById('stat-match').textContent = avg.toFixed(1) + '%';
+        } else {
+          document.getElementById('stat-match').textContent = '—';
+        }
+      }
+
+      function showSkeletonLoader() {
+        const container = document.getElementById('job-cards-container');
+        container.innerHTML = `
+          <div class="skeleton-card">
+            <div class="skeleton-line skeleton-title"></div>
+            <div class="skeleton-line skeleton-meta"></div>
+            <div class="skeleton-line skeleton-desc"></div>
+          </div>
+          <div class="skeleton-card">
+            <div class="skeleton-line skeleton-title"></div>
+            <div class="skeleton-line skeleton-meta"></div>
+            <div class="skeleton-line skeleton-desc"></div>
+          </div>
+        `;
+      }
+
+      function switchTab(tabName) {
+        activeTab = tabName;
+        document.querySelectorAll('#tabs .tab').forEach(btn => {
+          btn.classList.remove('active');
+        });
+        const index = ['all', 'evaluated', 'applied', 'interviewing', 'archived'].indexOf(tabName);
+        if (index !== -1) {
+          document.querySelectorAll('#tabs .tab')[index].classList.add('active');
+        }
+        renderPipeline();
+      }
+
+      function renderPipeline() {
+        const container = document.getElementById('job-cards-container');
+        
+        let filtered = globalJobsList;
+        if (activeTab !== 'all') {
+          filtered = globalJobsList.filter(job => job.status.toLowerCase() === activeTab);
+        }
+
+        if (filtered.length === 0) {
+          container.innerHTML = `
+            <div class="empty-state">
+              <h3>No opportunities found</h3>
+              <p>Try switching filters or run a new search to discover openings.</p>
+            </div>
+          `;
+          return;
+        }
+
+        container.innerHTML = filtered.map(job => {
+          const applied = Boolean(job.applied);
+          const percent = job.match_score || 0;
+          
+          // Determine match colors
+          let ringColor = 'var(--accent-indigo)';
+          if (percent >= 90) ringColor = 'var(--accent-emerald)';
+          else if (percent >= 75) ringColor = 'var(--accent-blue)';
+          else if (percent < 50) ringColor = 'var(--accent-rose)';
+
+          // SVG radial configuration (R=24 => circumference = 150.79)
+          const circumference = 150.79;
+          const dashoffset = circumference - (circumference * percent) / 100;
+
+          const descSnippet = (job.raw_description || '')
+            .replace(/<[^>]+>/g, ' ')
+            .substring(0, 260) + ((job.raw_description || '').length > 260 ? '...' : '');
+
+          const isArchived = job.status === 'Archived';
+
+          return `
+            <div class="job-card ${isArchived ? 'archived' : ''}" id="card-${job.id}">
+              <div class="job-card-header">
+                <div class="job-meta-left">
+                  <div class="match-ring" style="--ring-color: ${ringColor}; --dashoffset: ${dashoffset}px;">
+                    <svg>
+                      <circle cx="28" cy="28" r="24"></circle>
+                      <circle cx="28" cy="28" r="24"></circle>
+                    </svg>
+                    <span>${percent}%</span>
+                  </div>
+                  <div class="job-title-block">
+                    <h3><a href="${job.url || '#'}" target="_blank" rel="noopener noreferrer">${escapeHtml(job.title)}</a></h3>
+                    <div class="job-details-sub">
+                      <span class="company">${escapeHtml(job.company)}</span>
+                      <span class="dot-separator"></span>
+                      <span>${escapeHtml(job.location || 'Remote')}</span>
+                      <span class="dot-separator"></span>
+                      <span class="badge-pill badge-source">${escapeHtml(job.source || 'Pipeline')}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="job-card-actions">
+                  <span class="badge-pill badge-status ${job.status.toLowerCase()}">${job.status}</span>
+                  
+                  <button class="btn secondary mini" id="verify-btn-${job.id}" onclick="verifyJobActive('${job.id}')">
+                    Verify Active
+                  </button>
+
+                  <button class="btn secondary mini" onclick="tailorResume('${job.id}')">
+                    Tailor Resume
+                  </button>
+
+                  ${!applied ? `
+                    <button class="btn success mini" onclick="markAsApplied('${job.id}')">
+                      Mark Applied
+                    </button>
+                  ` : `
+                    <button class="btn secondary mini" disabled>
+                      ✓ Applied
+                    </button>
+                  `}
+                </div>
+              </div>
+              
+              <div class="job-description-excerpt">
+                ${escapeHtml(descSnippet)}
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      async function runDailySearch() {
+        const searchBtn = document.getElementById('search-btn');
+        searchBtn.disabled = true;
+        searchBtn.innerHTML = `<span class="spinner"></span> Scanning Boards...`;
+        showMessage('Launching multi-agent crawlers to search LinkedIn, Indeed, Glassdoor & Remotive...', 'info');
+
+        try {
+          const keywordsInput = document.getElementById('keywords').value;
+          const keywords = keywordsInput.split(',').map(k => k.trim()).filter(Boolean);
+          const location = document.getElementById('location').value.trim();
+
+          const res = await fetch('/api/v1/automation/run-daily-search', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ keywords, location })
+          });
+
+          const data = await res.json();
+          if (data.status === 'success') {
+            showMessage(`Search complete! Found ${data.summary.jobs_found} matching roles. Tailored assets created.`, 'success');
+            await fetchPipelineSnapshot();
+          } else {
+            showMessage('Search completed with errors. Check server logs.', 'error');
+          }
+        } catch (err) {
+          console.error(err);
+          showMessage('Failed to complete search operation.', 'error');
+        } finally {
+          searchBtn.disabled = false;
+          searchBtn.innerHTML = `
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            Scan For Vacancies
+          `;
+        }
+      }
+
+      async function verifyJobActive(jobId) {
+        const btn = document.getElementById(`verify-btn-${jobId}`);
+        btn.disabled = true;
+        btn.innerHTML = `<span class="spinner"></span>`;
+        
+        try {
+          const res = await fetch(`/api/v1/pipeline/${encodeURIComponent(jobId)}/check-active`, {
+            method: 'POST'
+          });
+          const data = await res.json();
+
+          if (data.status === 'inactive') {
+            showMessage(`${data.message}`, 'error');
+            // Animate card transition
+            const card = document.getElementById(`card-${jobId}`);
+            card.style.opacity = '0';
+            card.style.transform = 'scale(0.95)';
+            setTimeout(async () => {
+              await fetchPipelineSnapshot();
+            }, 300);
+          } else {
+            showMessage(`${data.message}`, 'success');
+            btn.innerHTML = 'Active ✓';
+            btn.style.color = 'var(--accent-emerald)';
+            setTimeout(() => {
+              btn.disabled = false;
+              btn.innerHTML = 'Verify Active';
+              btn.style.color = '';
+            }, 3000);
+          }
+        } catch (err) {
+          console.error(err);
+          showMessage('Failed to verify posting status.', 'error');
+          btn.disabled = false;
+          btn.innerHTML = 'Verify Active';
+        }
+      }
+
+      async function markAsApplied(jobId) {
+        showMessage('Marking job as applied...', 'info');
+        try {
+          const res = await fetch('/api/v1/pipeline/mark-applied', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ job_id: jobId, notes: 'Marked applied via Premium Dashboard' })
+          });
+          
+          if (res.ok) {
+            showMessage('Application logged successfully.', 'success');
+            await fetchPipelineSnapshot();
+          } else {
+            showMessage('Failed to transition job status.', 'error');
+          }
+        } catch (err) {
+          console.error(err);
+          showMessage('Connection error updating job.', 'error');
+        }
+      }
+
+      async function tailorResume(jobId) {
+        const modal = document.getElementById('resume-modal');
+        const modalText = document.getElementById('modal-resume-text');
+        const modalDownload = document.getElementById('modal-download-btn');
+        
+        modalText.textContent = 'Contacting Resume Optimizer Agent... Generating optimized copy...';
+        modalDownload.style.display = 'none';
+        modal.classList.add('open');
+
+        try {
+          const res = await fetch(`/api/v1/pipeline/${encodeURIComponent(jobId)}/tailor`, {
+            method: 'POST'
+          });
+          const data = await res.json();
+
+          if (res.ok) {
+            document.getElementById('modal-job-title').textContent = `${data.title} @ ${data.company}`;
+            modalText.textContent = data.resume_markdown;
+            modalDownload.href = data.resume_download_url;
+            modalDownload.style.display = 'inline-flex';
+          } else {
+            modalText.textContent = 'Optimization Agent failed: ' + (data.detail || 'Unknown issue.');
+          }
+        } catch (err) {
+          console.error(err);
+          modalText.textContent = 'Connection timeout or error contacting backend optimizer.';
+        }
+      }
+
+      function closeModal() {
+        document.getElementById('resume-modal').classList.remove('open');
+      }
+
+      function copyResumeText() {
+        const text = document.getElementById('modal-resume-text').textContent;
+        navigator.clipboard.writeText(text);
+        showMessage('Markdown copied to clipboard!', 'success');
+      }
+
+      function escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/[&<>'"]/g, tag => ({
+          '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
+        }[tag] || tag));
+      }
+
+      // Chart.js initialization
+      function renderChart(jobs) {
+        const counts = {
+          'Evaluated': 0,
+          'Applied': 0,
+          'Interviewing': 0,
+          'Offer': 0,
+          'Archived': 0
+        };
+
+        jobs.forEach(job => {
+          const status = job.status || 'Evaluated';
+          if (counts[status] !== undefined) {
+            counts[status]++;
+          } else {
+            counts['Evaluated']++;
+          }
+        });
+
+        const ctx = document.getElementById('funnelChart').getContext('2d');
+        
+        if (funnelChartInstance) {
+          funnelChartInstance.destroy();
+        }
+
+        funnelChartInstance = new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels: Object.keys(counts),
+            datasets: [{
+              label: 'Vacancies',
+              data: Object.values(counts),
+              backgroundColor: [
+                'rgba(99, 102, 241, 0.65)',  // Indigo
+                'rgba(56, 189, 248, 0.65)',  // Blue
+                'rgba(16, 185, 129, 0.65)',  // Emerald
+                'rgba(245, 158, 11, 0.65)',   // Amber
+                'rgba(148, 163, 184, 0.5)'    // Slate
+              ],
+              borderColor: [
+                'rgba(99, 102, 241, 1)',
+                'rgba(56, 189, 248, 1)',
+                'rgba(16, 185, 129, 1)',
+                'rgba(245, 158, 11, 1)',
+                'rgba(148, 163, 184, 1)'
+              ],
+              borderWidth: 1.5,
+              borderRadius: 8,
+              barPercentage: 0.6
+            }]
+          },
+          options: {
+            indexAxis: 'y',
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { display: false },
+              tooltip: {
+                backgroundColor: 'rgba(15, 23, 42, 0.9)',
+                titleFont: { family: 'Plus Jakarta Sans', weight: 'bold' },
+                bodyFont: { family: 'Plus Jakarta Sans' },
+                borderColor: 'rgba(255, 255, 255, 0.1)',
+                borderWidth: 1
+              }
+            },
+            scales: {
+              x: {
+                grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                ticks: { color: '#94a3b8', font: { family: 'Plus Jakarta Sans' }, stepSize: 1 }
+              },
+              y: {
+                grid: { display: false },
+                ticks: { color: '#f8fafc', font: { family: 'Plus Jakarta Sans', weight: 'bold' } }
+              }
+            }
+          }
+        });
+      }
+    </script>
+  </body>
+</html>

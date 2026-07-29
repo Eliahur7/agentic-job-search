@@ -1,0 +1,17 @@
+# 1. Navigate to your backend directory
+cd backend
+
+# 2. Create and activate a local python virtual environment
+python3 -m venv venv
+source venv/bin/activate  # On Windows use: venv\Scripts\activate
+
+# 3. Install the project requirements
+pip install -r requirements.txt
+
+# 4. Set your environment variables locally
+export OPENAI_API_KEY="your_openai_key"
+export JOOBLE_API_KEY="your_jooble_key"
+export DATABASE_URL="postgresql://user:pass@localhost:5432/db"
+
+# 5. Start the FastAPI server manually
+uvicorn app.main:app --reload
