@@ -9,6 +9,8 @@
 
 > **🚀 Welcome to the Future of Job Hunting**
 > An AI-powered, autonomous pipeline system that continuously scans for executive roles, meticulously tailors your resume and cover letters, and tracks your application progress through an intuitive API and CLI.
+>
+> **Created by Ran Eliahu via Google AntiGravity**
 
 This repository is an **example template** showcasing what a modern, AI-first job search engine looks like. It is pre-configured with a fictional AI Executive ("Jon Doe") to demonstrate how you can leverage generative AI, agentic architectures, and automated pipelines to land your next leadership role. **Clone this repository to build your own personal career engine!**
 
@@ -285,8 +287,14 @@ Access the API at `http://localhost:8000`.
 
 ---
 
-## �📞 Support
+## 👨‍💻 Author & Acknowledgments
 
-For issues, open a GitHub issue or contact the maintainer.
+Created by **Ran Eliahu** via **Google AntiGravity**.
 
 **Latest Update:** June 25, 2026 — Multi-agent system, API, CLI, and PDF export.
+
+---
+
+## 📞 Support
+
+For issues, open a GitHub issue or contact the maintainer.
