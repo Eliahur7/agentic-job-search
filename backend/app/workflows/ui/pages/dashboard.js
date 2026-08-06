@@ -16,7 +16,7 @@ export default function ExecutiveDashboard() {
           setBriefingData(data);
         }
       } catch (error) {
-        console.error("Error connecting to Chief-of-Staff API:", error);
+        console.error("Error connecting to Agentic Job Search API:", error);
       } finally {
         setLoading(false);
       }
@@ -39,7 +39,7 @@ export default function ExecutiveDashboard() {
       <header className="border-b border-slate-800 bg-slate-900/50 backdrop-blur sticky top-0 z-50 px-8 py-4 flex justify-between items-center">
         <div>
           <h1 className="text-xl font-bold bg-gradient-to-r from-indigo-400 to-cyan-400 bg-clip-text text-transparent">
-            Chief-of-Staff AI System
+            Agentic Job Search System
           </h1>
           <p className="text-xs text-slate-400">Enterprise Engineering Leadership Command Center</p>
         </div>

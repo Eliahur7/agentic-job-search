@@ -14,7 +14,7 @@ from backend.app.utils.pdf_generator import export_text_document, export_pdf_doc
 from backend.app.utils.pdf_utils import extract_text_from_pdf
 from backend.app.automation import run_daily_search
 
-app = FastAPI(title="Executive Chief-of-Staff AI Engine (Production Tier)", version="3.0")
+app = FastAPI(title="Agentic Job Search API (Production Tier)", version="3.0")
 
 @app.on_event("startup")
 def startup_event():

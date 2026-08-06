@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-CLI tool for managing the Chief-of-Staff AI job pipeline locally.
+CLI tool for managing the Agentic Job Search pipeline locally.
 Examples:
   python3 backend/app/cli.py list
   python3 backend/app/cli.py list --status Applied
@@ -122,7 +122,7 @@ def cmd_digest(args):
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Chief-of-Staff AI Pipeline Manager",
+        description="Agentic Job Search Pipeline Manager",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog=__doc__
     )
