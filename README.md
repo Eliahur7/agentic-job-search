@@ -1,186 +1,187 @@
 # 🤖 Agentic Job Search — Autonomous Executive Job Discovery Engine
 
+<div align="center">
+
+![CI](https://github.com/Eliahur7/agentic-job-search/actions/workflows/ci.yml/badge.svg)
 ![Python](https://img.shields.io/badge/Python-3.9%2B-blue?logo=python&logoColor=white)
-![FastAPI](https://img.shields.io/badge/FastAPI-0.100.0-009688?logo=fastapi&logoColor=white)
+![FastAPI](https://img.shields.io/badge/FastAPI-0.111-009688?logo=fastapi&logoColor=white)
 ![OpenAI](https://img.shields.io/badge/OpenAI-GPT--4-412991?logo=openai&logoColor=white)
 ![SQLite](https://img.shields.io/badge/SQLite-Database-003B57?logo=sqlite&logoColor=white)
-![AI Agents](https://img.shields.io/badge/Architecture-Multi--Agent-FF9900)
-![Status](https://img.shields.io/badge/Status-Template-success)
+![License](https://img.shields.io/badge/License-MIT-green)
+![Stars](https://img.shields.io/github/stars/Eliahur7/agentic-job-search?style=social)
 
-> **🚀 Welcome to the Future of Job Hunting**
-> An AI-powered, autonomous pipeline system that continuously scans for executive roles, meticulously tailors your resume and cover letters, and tracks your application progress through an intuitive API and CLI.
->
-> **Created by Ran Eliahu via Google AntiGravity**
+**Stop manually refreshing job boards. Let AI do it for you.**
 
-This repository is an **example template** showcasing what a modern, AI-first job search engine looks like. It is pre-configured with a fictional AI Executive ("Jon Doe") to demonstrate how you can leverage generative AI, agentic architectures, and automated pipelines to land your next leadership role. **Clone this repository to build your own personal career engine!**
+An autonomous, multi-agent pipeline that continuously scans LinkedIn, Indeed, Glassdoor & Remotive for roles that match your background — then auto-tailors your resume and cover letter, and tracks every application in a slick dashboard.
 
-### 🏷️ Recommended GitHub Tags 
-Add these to your repository topics to grab attention: `ai`, `multi-agent`, `job-search`, `resume-builder`, `fastapi`, `openai`, `python`, `career-automation`, `generative-ai`
+[🚀 Quick Start](#-quick-start) · [📋 Features](#-features) · [🤖 How It Works](#-how-it-works) · [🛠️ API Docs](#-api-endpoints) · [🤝 Contributing](CONTRIBUTING.md)
 
-> **⚠️ Note:** This is an explorational and educational proof-of-concept. Use this as a reference or inspiration for building your own tools!
+</div>
+
+---
+
+![Dashboard Preview](https://raw.githubusercontent.com/Eliahur7/agentic-job-search/main/docs/dashboard_preview.png)
+
+> **⚠️ Disclaimer:** This is an educational proof-of-concept template. Use responsibly and in accordance with each job board's terms of service. Pre-configured with a fictional candidate "Jon Doe" — clone and replace with your own details.
+
+---
+
+## ✨ Why This Exists
+
+Job searching is a full-time job. You refresh the same boards daily, copy-paste your resume into every application, and lose track of where you applied. This project automates the grunt work:
+
+- 🔍 **Scans 6+ job boards** every time you click a button
+- 🎯 **Scores each role** against your resume with weighted keyword matching  
+- 📄 **Generates tailored resumes + cover letters** per company (with OpenAI or local fallback)
+- 📊 **Tracks your pipeline** from `Evaluated → Applied → Interviewing → Offer`
+- 📬 **Writes your outreach templates** — LinkedIn notes and cold emails, ready to send
+
+---
 
 ## 🎯 Features
 
-- **Live Job Fetching**: Integrates with Remotive API to fetch remote and Milwaukee-area jobs (or use mock feed)
-- **AI-Powered Matching**: Scores jobs against your background using keyword analysis
-- **Resume Tailoring**: Auto-generates tailored resumes and cover letters (with OpenAI integration)
-- **PDF Export**: Generates professional PDF versions of tailored documents
-- **Job Pipeline Tracking**: SQLite-backed persistence with multi-status tracking (Evaluated → Applied → Interviewing → Offer)
-- **REST API**: Full-featured FastAPI endpoints for pipeline management
-- **CLI Tool**: Interactive command-line interface for viewing and managing your job pipeline
-- **Daily Digest**: Automatic markdown briefing with matched opportunities and portfolio recommendations
-- **Interactive Job Search**: Set target titles and location in the dashboard, review the title, company, match evidence, and apply link, then create a role-specific resume on demand
+| Feature | Description |
+|---------|-------------|
+| **Live Job Fetching** | Scrapes LinkedIn, Indeed, Glassdoor, Remotive, WeWorkRemotely, RemoteOK, Jobspresso |
+| **AI Scoring** | Scores each role 0–100 against your resume with evidence-based matching |
+| **Resume Tailoring** | Auto-generates tailored resumes + cover letters per company |
+| **PDF Export** | Exports professional PDFs of every tailored document |
+| **Pipeline Tracking** | SQLite-backed status tracking — Evaluated → Applied → Interviewing → Offer |
+| **REST API** | Full FastAPI backend with Swagger docs at `/docs` |
+| **Web Dashboard** | Single-page dashboard to search, review, and manage your pipeline |
+| **CLI Tool** | Full command-line interface for power users |
+| **Outreach Templates** | LinkedIn connection notes + cold emails generated per role |
+| **Time-Bounded Search** | Smart 60-second budget — returns results fast, never hangs |
 
 ---
 
 ## 🚀 Quick Start
 
-### Local Development
-
 **Prerequisites:** Python 3.9+
 
-**1. Install dependencies:**
 ```bash
-pip install -r requirements.txt
-```
+# 1. Clone the repo
+git clone https://github.com/Eliahur7/agentic-job-search.git
+cd agentic-job-search
 
-**2. Start the FastAPI server:**
-```bash
+# 2. Install dependencies
+pip install -r requirements.txt
+
+# 3. (Optional) Add your OpenAI key for AI-powered resume tailoring
+echo 'OPENAI_API_KEY=sk-your-key-here' > .env
+
+# 4. Start the server
 python3 -m uvicorn backend.app.main:app --host 127.0.0.1 --port 8000 --reload
 ```
 
-**3. In another terminal, fetch and process jobs:**
-```bash
-curl -X POST http://127.0.0.1:8000/api/v1/agent/daily-briefing
+Open **http://127.0.0.1:8000** — the dashboard is live. Click **"Scan For Vacancies"** to run your first search.
+
+> **No OpenAI key?** No problem. The app falls back to local keyword-based resume tailoring automatically.
+
+---
+
+## 🤖 How It Works
+
+```
+┌─────────────────────────────────────────────────────────┐
+│                   YOU click "Scan"                       │
+└──────────────────────────┬──────────────────────────────┘
+                           │
+              ┌────────────▼────────────┐
+              │     Job Hunter Agent    │
+              │  LinkedIn · Indeed      │
+              │  Glassdoor · Remotive   │
+              │  WWR · RemoteOK · More  │
+              └────────────┬────────────┘
+                           │ Ranked job list
+              ┌────────────▼────────────┐
+              │   Resume Optimizer      │
+              │   Tailored resume +     │
+              │   cover letter (PDF)    │
+              └────────────┬────────────┘
+                           │
+              ┌────────────▼────────────┐
+              │   Networking Agent      │
+              │   LinkedIn note +       │
+              │   cold email template   │
+              └────────────┬────────────┘
+                           │
+              ┌────────────▼────────────┐
+              │   SQLite Pipeline DB    │
+              │   Track every role      │
+              │   from eval → offer     │
+              └─────────────────────────┘
 ```
 
-**4. View your job pipeline:**
-```bash
-curl -X GET http://127.0.0.1:8000/api/v1/pipeline/snapshot | jq
-```
+### Multi-Agent Architecture
+
+| Agent | Purpose | Output |
+|-------|---------|--------|
+| **Job Hunter** | Fetch & score jobs across 6+ boards | Ranked job list with match scores |
+| **Resume Optimizer** | Tailor resume to job description | Tailored resume + cover letter (PDF) |
+| **Networking Agent** | Write outreach copy | LinkedIn note + cold email |
+| **GitHub Growth** | Portfolio recommendations | Project ideas to fill skill gaps |
 
 ---
 
 ## 🛠️ Configuration
 
-### Environment Variables
-
-Set these to enable advanced features:
-
 ```bash
-# OpenAI Integration (optional)
+# OpenAI (optional — enables GPT-4 resume tailoring)
 export OPENAI_API_KEY="sk-your-key-here"
-export ENABLE_OPENAI="1"  # Set to "1" to enable
 
-# Live Job Fetching (enabled by default; set to 0 to disable)
-export ENABLE_JOB_API="0"  # Disable the Remotive public API if desired
-
-# Public board listing fetches are enabled by default. Set either to 0 to opt out.
+# Disable specific job boards (all enabled by default)
 export ENABLE_LINKEDIN_SCRAPING="0"
-export ENABLE_BOARD_SCRAPING="0"  # Indeed; Glassdoor is also queried when reachable
+export ENABLE_BOARD_SCRAPING="0"      # Indeed
 export ENABLE_GLASSDOOR_SCRAPING="0"
+export ENABLE_JOB_API="0"            # Remotive + RSS feeds
 ```
 
-**Default behavior (without env vars):**
-- Searches public job listing pages when they are reachable; the app never inserts a demo or mock opening into the live pipeline
-- Generates an evidence-preserving, local tailored resume and cover letter when OpenAI is not configured
-- Persists all jobs and statuses locally in SQLite
-
-Job boards change frequently and may restrict automated access. This app treats the returned canonical listing as the application handoff, does not attempt login or bypass access controls, and should be used in accordance with each site's terms.
+**Customize for yourself:** Edit `REAL_RESUME_CONTEXT` in `backend/app/main.py` with your own resume text, and update the default keywords/location.
 
 ---
 
 ## 📋 API Endpoints
 
-### POST /api/v1/agent/daily-briefing
-Fetch live jobs, score them, tailor resumes, and return markdown briefing.
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `POST` | `/api/v1/automation/run-daily-search` | Scan boards, score & store jobs |
+| `POST` | `/api/v1/agent/daily-briefing` | Full briefing with resume tailoring |
+| `GET` | `/api/v1/pipeline/snapshot` | View all tracked jobs |
+| `POST` | `/api/v1/pipeline/mark-applied` | Mark a job as applied |
+| `PATCH` | `/api/v1/pipeline/update-status` | Update job status |
+| `POST` | `/api/v1/pipeline/{job_id}/tailor` | On-demand resume tailoring |
+| `GET` | `/api/v1/pipeline/{job_id}/tailored-resume` | Download tailored PDF |
+| `POST` | `/api/v1/pipeline/{job_id}/check-active` | Verify posting is still live |
 
-```bash
-curl -X POST http://127.0.0.1:8000/api/v1/agent/daily-briefing
-```
-
-**Response:** Markdown digest with job matches, company intel, and portfolio recommendations.
-
----
-
-### GET /api/v1/pipeline/snapshot
-Retrieve all tracked jobs with status and scores.
-
-```bash
-curl -X GET http://127.0.0.1:8000/api/v1/pipeline/snapshot | jq
-```
-
----
-
-### POST /api/v1/pipeline/mark-applied
-Mark a job as applied.
-
-```bash
-curl -X POST http://127.0.0.1:8000/api/v1/pipeline/mark-applied \
-  -H "Content-Type: application/json" \
-  -d '{"job_id":"<job-id>", "notes":"Applied via LinkedIn"}'
-```
-
----
-
-### PATCH /api/v1/pipeline/update-status
-Update job status (e.g., Applied → Interviewing).
-
-```bash
-curl -X PATCH http://127.0.0.1:8000/api/v1/pipeline/update-status \
-  -H "Content-Type: application/json" \
-  -d '{"job_id":"<job-id>", "status":"Interviewing", "notes":"Phone screen Friday"}'
-```
+Full interactive docs at **http://127.0.0.1:8000/docs**
 
 ---
 
 ## 🖥️ CLI Tool
 
-Manage your pipeline from the command line:
-
-### List all jobs:
 ```bash
+# List all tracked jobs
 python3 backend/app/cli.py list
-```
 
-### View daily digest:
-```bash
+# View daily digest
 python3 backend/app/cli.py digest
-```
 
-### Mark a job as applied:
-```bash
+# Mark a job as applied
 python3 backend/app/cli.py mark "<job-id>" Applied --notes "Applied on 2026-06-25"
-```
 
-### Show job details:
-```bash
+# Show job details
 python3 backend/app/cli.py show "<job-id>"
-```
 
-### Filter by status:
-```bash
+# Filter by status
 python3 backend/app/cli.py list --status Applied
 ```
 
 ---
 
-## 🤖 Multi-Agent System
+## 💾 Database Schema
 
-The system uses autonomous agents for different tasks:
-
-| Agent | Purpose | Input | Output |
-|-------|---------|-------|--------|
-| **Job Hunter** | Fetch & score jobs | Keywords, location | Ranked job list |
-| **Resume Optimizer** | Tailor resumes | Master resume, job desc | Tailored resume + cover letter (PDF) |
-| **Networking Agent** | Outreach templates | Company, role, resume | LinkedIn notes + cold email |
-| **GitHub Growth** | Portfolio tips | Focus areas | Project ideas & recommendations |
-
----
-
-## 💾 Database
-
-All jobs and statuses are persisted in SQLite (`application_state.db`):
+All jobs are persisted in `application_state.db` (SQLite):
 
 ```sql
 CREATE TABLE processed_jobs (
@@ -189,11 +190,11 @@ CREATE TABLE processed_jobs (
     title TEXT,
     url TEXT,                         -- Job posting link
     raw_description TEXT,             -- Full job description
-    match_score REAL,                 -- 0-100 score
-    processed_at TEXT,                -- Timestamp
+    match_score REAL,                 -- 0–100 score
+    processed_at TEXT,
     status TEXT DEFAULT 'Evaluated',  -- Evaluated | Applied | Interviewing | Offer | Archived
-    applied INTEGER DEFAULT 0,        -- 1 if Applied, 0 otherwise
-    notes TEXT                        -- User notes
+    applied INTEGER DEFAULT 0,
+    notes TEXT
 );
 ```
 
@@ -202,99 +203,69 @@ CREATE TABLE processed_jobs (
 ## 📦 Project Structure
 
 ```
-backend/
-├── app/
-│   ├── main.py                 # FastAPI server
-│   ├── cli.py                  # CLI tool
-│   ├── database.py             # SQLite layer
-│   ├── agents/
-│   │   ├── job_hunter.py       # Job fetching
-│   │   ├── resume_optimizer.py # Resume tailoring
-│   │   ├── networking_agent.py # Outreach
-│   │   └── github_growth.py    # Portfolio tips
-│   ├── utils/
-│   │   ├── pdf_generator.py    # PDF export
-│   │   └── pdf_utils.py        # PDF extraction
-│   └── workflows/
-│       └── daily_briefing.py   # Digest compilation
-├── Dockerfile
-└── docker-compose.yml
+agentic-job-search/
+├── backend/
+│   └── app/
+│       ├── main.py                 # FastAPI server & endpoints
+│       ├── automation.py           # Daily search orchestrator
+│       ├── cli.py                  # CLI tool
+│       ├── database.py             # SQLite layer
+│       ├── dashboard.html          # Web dashboard (single-file UI)
+│       ├── agents/
+│       │   ├── job_hunter.py       # Multi-board scraper + scorer
+│       │   ├── resume_optimizer.py # Resume & cover letter tailoring
+│       │   ├── networking_agent.py # Outreach template generator
+│       │   └── github_growth.py    # Portfolio recommendations
+│       ├── utils/
+│       │   ├── pdf_generator.py    # PDF export
+│       │   └── pdf_utils.py        # PDF text extraction
+│       └── workflows/
+│           └── daily_briefing.py   # Digest compilation
+├── company_research.py             # Company intel agent
+├── requirements.txt
+├── .github/workflows/ci.yml        # CI pipeline
+└── CONTRIBUTING.md
 ```
 
 ---
 
-## 🚢 Docker Deployment
+## 🚢 Docker
 
 ```bash
 docker-compose up --build
 ```
 
-Access the API at `http://localhost:8000`.
+API available at `http://localhost:8000`.
 
 ---
 
-## 🔄 Workflow Example
+## 📝 Roadmap
 
-1. **Fetch jobs:**
-   ```bash
-   curl -X POST http://127.0.0.1:8000/api/v1/agent/daily-briefing
-   ```
-
-2. **Review pipeline:**
-   ```bash
-   python3 backend/app/cli.py digest
-   ```
-
-3. **Mark jobs as applied:**
-   ```bash
-   python3 backend/app/cli.py mark "<job-id>" Applied
-   ```
-
-4. **Track progress:**
-   ```bash
-   python3 backend/app/cli.py list --status Applied
-   ```
+- [ ] Email/SMS notifications for new high-match jobs
+- [ ] Scheduled automatic daily searches (cron)
+- [ ] Interview prep — auto-generate Q&A from job descriptions
+- [ ] ATS integrations (Lever, Greenhouse)
+- [ ] More job boards (Dice, Wellfound, Built In)
+- [ ] Resume upload via UI (replace hardcoded resume context)
 
 ---
 
-## 📝 Next Steps
+## 🤝 Contributing
 
-- [ ] Add email/SMS notifications for new high-match jobs
-- [ ] Build web dashboard for pipeline visualization
-- [ ] Implement job scheduling (hourly/daily fetches)
-- [ ] Add interview prep (auto-generate Q&A from job descriptions)
-- [ ] Integrate with ATS platforms (Lever, Greenhouse, etc.)
+Contributions are welcome! See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+
+Areas we'd love help with: new job board scrapers, improved AI scoring, UI enhancements, and tests.
 
 ---
 
-## 💡 About This Template Project
+## 👨‍💻 Author
 
-**Educational & Explorational Purpose:** This template was built as a technical showcase and proof-of-concept to demonstrate what modern AI and automation can accomplish for job seekers. It serves as an open-source educational tool and reference implementation for:
+Created by **Ran Eliahu** via **Google AntiGravity** · [GitHub](https://github.com/Eliahur7)
 
-- Multi-agent system architecture
-- AI-powered resume optimization
-- Job matching and scoring algorithms
-- SQLite-based persistence and pipeline tracking
-- REST API design for recruiting workflows
-- CLI tool development for career management
-
-**Use Cases for Cloning:**
-- Template for building your own personal AI-driven career tech
-- Educational guide on integrating multi-agent systems
-- Starting point for ATS automation and auto-apply bots
-- Inspiration for automated resume optimization pipelines
-- A glowing portfolio piece to show off your AI engineering skills
-
----
-
-## 👨‍💻 Author & Acknowledgments
-
-Created by **Ran Eliahu** via **Google AntiGravity**.
-
-**Latest Update:** June 25, 2026 — Multi-agent system, API, CLI, and PDF export.
+If this saves you time in your job search, consider giving it a ⭐ — it helps other job seekers find it!
 
 ---
 
 ## 📞 Support
 
-For issues, open a GitHub issue or contact the maintainer.
+Open a [GitHub Issue](https://github.com/Eliahur7/agentic-job-search/issues) for bugs or feature requests.
