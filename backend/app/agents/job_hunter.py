@@ -490,7 +490,16 @@ def _fetch_jobspresso_jobs(keywords: list) -> list:
     return results
 
 
-def fetch_live_jobs(keywords: list, location: str) -> list:
+def _time_remaining(deadline: float) -> bool:
+    """Return True if the time budget has NOT been exhausted."""
+    return time.time() < deadline
+
+
+def fetch_live_jobs(keywords: list, location: str, deadline: float = None) -> list:
+    # Default to a 60-second budget if no deadline is provided.
+    if deadline is None:
+        deadline = time.time() + 60
+
     enable_api = os.environ.get("ENABLE_JOB_API", "1") != "0"
     enable_linkedin = os.environ.get("ENABLE_LINKEDIN_SCRAPING", "1") != "0"
     scrape_indeed = os.environ.get("ENABLE_BOARD_SCRAPING", "1") != "0"
@@ -526,24 +535,41 @@ def fetch_live_jobs(keywords: list, location: str) -> list:
     search_queries = list(search_queries)
 
     for loc in locations_to_search:
+        if not _time_remaining(deadline):
+            print("[Scraper] Time budget reached during board scraping — returning partial results.")
+            break
         if enable_linkedin:
             for query in search_queries:
+                if not _time_remaining(deadline):
+                    break
                 results.extend(_scrape_linkedin([query], loc))
+        if not _time_remaining(deadline):
+            break
         if scrape_indeed:
             for query in search_queries:
+                if not _time_remaining(deadline):
+                    break
                 results.extend(_scrape_indeed([query], loc))
+        if not _time_remaining(deadline):
+            break
         if scrape_glassdoor:
             for query in search_queries:
+                if not _time_remaining(deadline):
+                    break
                 results.extend(_scrape_glassdoor([query], loc))
-    if enable_api:
+    if enable_api and _time_remaining(deadline):
         # Query Remotive using the derived broader queries to maximize results
         for query in search_queries:
+            if not _time_remaining(deadline):
+                break
             results.extend(_fetch_remotive_jobs([query], location))
         # Fetch RSS feeds if searching for remote roles or broad tech leadership
-        if not location or "remote" in location.lower():
+        if _time_remaining(deadline) and (not location or "remote" in location.lower()):
             results.extend(_fetch_weworkremotely_jobs(keywords))
-            results.extend(_fetch_remoteok_jobs(keywords))
-            results.extend(_fetch_jobspresso_jobs(keywords))
+            if _time_remaining(deadline):
+                results.extend(_fetch_remoteok_jobs(keywords))
+            if _time_remaining(deadline):
+                results.extend(_fetch_jobspresso_jobs(keywords))
 
     normalized = {}
     role_keys = set()
@@ -587,9 +613,12 @@ def fetch_live_jobs_with_target(
     """
     Guarantees fetching at least `min_target` new (unprocessed) relevant positions.
     Iteratively queries primary feeds, fallback feeds, and expanded keyword search variants.
+    Enforces a 60-second overall time budget so the UI never hangs indefinitely.
     """
     if processed_job_ids is None:
         processed_job_ids = set()
+
+    deadline = time.time() + 60  # Overall 60-second budget for the whole search
 
     expanded_keywords_pool = list(keywords)
     extra_keywords = [
@@ -613,19 +642,19 @@ def fetch_live_jobs_with_target(
     seen_ids = set()
 
     # Initial fetch using primary search setup
-    initial_jobs = fetch_live_jobs(keywords, location)
+    initial_jobs = fetch_live_jobs(keywords, location, deadline=deadline)
     for job in initial_jobs:
         jid = str(job.get("id") or job.get("url"))
         if jid not in processed_job_ids and jid not in seen_ids:
             all_jobs.append(job)
             seen_ids.add(jid)
 
-    if len(all_jobs) >= min_target:
+    if len(all_jobs) >= min_target or not _time_remaining(deadline):
         return all_jobs
 
     # Additional RSS feeds if target is not yet met
     enable_api = os.environ.get("ENABLE_JOB_API", "1") != "0"
-    if enable_api:
+    if enable_api and _time_remaining(deadline):
         remoteok_jobs = _fetch_remoteok_jobs(expanded_keywords_pool)
         for job in remoteok_jobs:
             normalized = _normalize_job_entry(job, location)
@@ -635,7 +664,7 @@ def fetch_live_jobs_with_target(
                 all_jobs.append(normalized)
                 seen_ids.add(jid)
 
-        if len(all_jobs) >= min_target:
+        if len(all_jobs) >= min_target or not _time_remaining(deadline):
             return all_jobs
 
         jobspresso_jobs = _fetch_jobspresso_jobs(expanded_keywords_pool)
@@ -647,18 +676,19 @@ def fetch_live_jobs_with_target(
                 all_jobs.append(normalized)
                 seen_ids.add(jid)
 
-        if len(all_jobs) >= min_target:
+        if len(all_jobs) >= min_target or not _time_remaining(deadline):
             return all_jobs
 
-    # Secondary broader query sweep if target is still not met
-    broad_jobs = fetch_live_jobs(expanded_keywords_pool, location)
-    for job in broad_jobs:
-        jid = str(job.get("id") or job.get("url"))
-        if jid not in processed_job_ids and jid not in seen_ids:
-            all_jobs.append(job)
-            seen_ids.add(jid)
-        if len(all_jobs) >= min_target * 2:
-            break
+    # Secondary broader query sweep if target is still not met AND time permits
+    if _time_remaining(deadline):
+        broad_jobs = fetch_live_jobs(expanded_keywords_pool, location, deadline=deadline)
+        for job in broad_jobs:
+            jid = str(job.get("id") or job.get("url"))
+            if jid not in processed_job_ids and jid not in seen_ids:
+                all_jobs.append(job)
+                seen_ids.add(jid)
+            if len(all_jobs) >= min_target * 2:
+                break
 
     return all_jobs
 
