@@ -62,7 +62,7 @@ Here are some great places to start:
 
 ## 🐛 Reporting Bugs
 
-Please open a [GitHub Issue](https://github.com/Eliahur7/agentic-job-search/issues) with:
+Please open a [GitHub Issue](https://github.com/ran-eliahu/agentic-job-search/issues) with:
 - A clear description of the bug
 - Steps to reproduce it
 - Expected vs. actual behavior
@@ -72,7 +72,7 @@ Please open a [GitHub Issue](https://github.com/Eliahur7/agentic-job-search/issu
 
 ## 💡 Suggesting Features
 
-Open a [GitHub Issue](https://github.com/Eliahur7/agentic-job-search/issues) with the `enhancement` label. Describe the use case and what value it would add for job seekers.
+Open a [GitHub Issue](https://github.com/ran-eliahu/agentic-job-search/issues) with the `enhancement` label. Describe the use case and what value it would add for job seekers.
 
 ---
 
@@ -82,4 +82,4 @@ By contributing, you agree that your contributions will be licensed under the sa
 
 ---
 
-Built with ❤️ by [Ran Eliahu](https://github.com/Eliahur7) — contributions make this better for every job seeker who uses it.
+Built with ❤️ by [Ran Eliahu](https://github.com/ran-eliahu) — contributions make this better for every job seeker who uses it.

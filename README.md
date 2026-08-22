@@ -2,13 +2,13 @@
 
 <div align="center">
 
-![CI](https://github.com/Eliahur7/agentic-job-search/actions/workflows/ci.yml/badge.svg)
+![CI](https://github.com/ran-eliahu/agentic-job-search/actions/workflows/ci.yml/badge.svg)
 ![Python](https://img.shields.io/badge/Python-3.9%2B-blue?logo=python&logoColor=white)
 ![FastAPI](https://img.shields.io/badge/FastAPI-0.111-009688?logo=fastapi&logoColor=white)
 ![OpenAI](https://img.shields.io/badge/OpenAI-GPT--4-412991?logo=openai&logoColor=white)
 ![SQLite](https://img.shields.io/badge/SQLite-Database-003B57?logo=sqlite&logoColor=white)
 ![License](https://img.shields.io/badge/License-MIT-green)
-![Stars](https://img.shields.io/github/stars/Eliahur7/agentic-job-search?style=social)
+![Stars](https://img.shields.io/github/stars/ran-eliahu/agentic-job-search?style=social)
 
 **Stop manually refreshing job boards. Let AI do it for you.**
 
@@ -20,7 +20,7 @@ An autonomous, multi-agent pipeline that continuously scans LinkedIn, Indeed, Gl
 
 ---
 
-![Dashboard Preview](https://raw.githubusercontent.com/Eliahur7/agentic-job-search/main/docs/dashboard_preview.png)
+![Dashboard Preview](https://raw.githubusercontent.com/ran-eliahu/agentic-job-search/main/docs/dashboard_preview.png)
 
 > **⚠️ Disclaimer:** This is an educational proof-of-concept template. Use responsibly and in accordance with each job board's terms of service. Pre-configured with a fictional candidate "Jon Doe" — clone and replace with your own details.
 
@@ -61,7 +61,7 @@ Job searching is a full-time job. You refresh the same boards daily, copy-paste 
 
 ```bash
 # 1. Clone the repo
-git clone https://github.com/Eliahur7/agentic-job-search.git
+git clone https://github.com/ran-eliahu/agentic-job-search.git
 cd agentic-job-search
 
 # 2. Install dependencies
@@ -260,7 +260,7 @@ Areas we'd love help with: new job board scrapers, improved AI scoring, UI enhan
 
 ## 👨‍💻 Author
 
-Created by **Ran Eliahu** via **Google AntiGravity** · [GitHub](https://github.com/Eliahur7)
+Created by **Ran Eliahu** via **Google AntiGravity** · [GitHub](https://github.com/ran-eliahu)
 
 If this saves you time in your job search, consider giving it a ⭐ — it helps other job seekers find it!
 
@@ -268,4 +268,4 @@ If this saves you time in your job search, consider giving it a ⭐ — it helps
 
 ## 📞 Support
 
-Open a [GitHub Issue](https://github.com/Eliahur7/agentic-job-search/issues) for bugs or feature requests.
+Open a [GitHub Issue](https://github.com/ran-eliahu/agentic-job-search/issues) for bugs or feature requests.
